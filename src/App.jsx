@@ -4,6 +4,9 @@ import PageInstructions from './PageInstruction';
 import AHPSurveyPage from './AHPSurveyPage';
 import PageFinish from './PageFinish';
 
+import { db } from './firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+
 // --- DATA KONSTANTA ---
 const FACTORS_LEVEL_1 = [
   { id: 0, name: 'Technology', desc: 'Berfokus pada teknologi internal dan eksternal yang relevan serta tersedia bagi operasional organisasi.' },
@@ -33,14 +36,46 @@ function App() {
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({ name: '', job: '' });
   const [results, setResults] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false); // State loading
 
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
 
   const handleDataSave = (key, data) => {
-    setResults(prev => ({ ...prev, [key]: data }));
-    console.log(results);
+    setResults(prev => {
+      const newResults = { ...prev, [key]: data };
+      return newResults;
+    });
     nextStep();
+  };
+
+  // Fungsi FINAL untuk kirim ke Firebase
+  // Dipanggil saat selesai mengisi step terakhir (ENV)
+  const handleFinalSubmit = async (envData) => {
+    setIsSubmitting(true);
+    
+    // Gabungkan data step terakhir dengan data sebelumnya
+    const finalSurveyData = {
+      respondent: userData,
+      survey_results: {
+        ...results,
+        ENV: envData // Masukkan data step terakhir
+      },
+      submittedAt: serverTimestamp() // Timestamp server
+    };
+
+    try {
+      // Simpan ke collection 'survei_ahp' di Firestore
+      await addDoc(collection(db, "survei_ahp"), finalSurveyData);
+      
+      // Jika sukses, pindah ke halaman Finish
+      nextStep(); 
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      alert("Terjadi kesalahan saat menyimpan data. Mohon coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -92,9 +127,18 @@ function App() {
             title="Perbandingan Level 2: Dimensi ENVIRONMENT"
             description="Mohon perkenan Bapak/Ibu memberikan urutan prioritas untuk 3 aspek environment berikut:"
             factors={FACTORS_ENV}
-            onNext={(data) => handleDataSave('ENV', data)}
+            onNext={(data) => handleFinalSubmit(data)}
             onBack={prevStep}
           />
+        )}
+
+        {isSubmitting && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-xl shadow-xl flex flex-col items-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-900 mb-4"></div>
+                    <p className="font-semibold text-slate-700">Menyimpan data survei...</p>
+                </div>
+            </div>
         )}
 
         {step === 7 && <PageFinish results={results} userData={userData} />}

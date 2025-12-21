@@ -1,9 +1,8 @@
 // --- HALAMAN 1: PERKENALAN ---
-
 import { Info, ChevronRight } from 'lucide-react';
+import binusLogo from './assets/binus-logo.png';
 
 // --- DATA KONSTANTA ---
-
 const JOB_TITLES = [
   "Kepala Pusat Layanan dan Informasi",
   "Tim Teknis Kemenkeu Cloud Platform",
@@ -16,6 +15,14 @@ export default function PageIntroduction({ userData, setUserData, onNext }) {
 
   return (
     <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200 animate-fade-in">
+      <div className="flex justify-left mb-8 border-b border-slate-100 pb-8">
+        <img 
+          src={binusLogo} 
+          alt="Binus University School of Information Systems" 
+          className="h-24 md:h-32 object-contain hover:scale-105 transition-transform duration-300" 
+        />
+      </div>
+      
       <div className="border-b pb-6 mb-6">
         <h1 className="text-2xl font-bold text-blue-900 mb-2">Yth. Bapak/Ibu Pengelola Kemenkeu Cloud Platform,</h1>
         <p className="text-slate-600">Badan Teknologi, Informasi, dan Intelijen Keuangan</p>
