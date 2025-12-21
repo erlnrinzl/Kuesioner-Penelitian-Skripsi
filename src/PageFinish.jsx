@@ -1,3 +1,5 @@
+import { ChevronRight, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+
 // --- HALAMAN AKHIR: FINISH ---
 export default function PageFinish({ userData }) {
   return (
