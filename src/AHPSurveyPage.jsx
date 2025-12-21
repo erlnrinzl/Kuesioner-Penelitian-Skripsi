@@ -81,6 +81,48 @@ export default function AHPSurveyPage({ title, description, factors, onNext, onB
   const isPreRankingComplete = rankings[1] && rankings[2] && rankings[3];
   const isComparisonComplete = !crResult.incomplete; // Gunakan hasil useMemo
 
+  const handleSave = () => {
+    
+    // 1. Transformasi Data Comparison
+    const readableComparisons = {};
+    const detailedComparisons = []; // Opsional: format array jika butuh detail lebih
+
+    Object.entries(comparisons).forEach(([key, value]) => {
+      const [idA, idB] = key.split('-').map(Number); // Pisahkan "0-1" jadi 0 dan 1
+      
+      // Ambil nama faktor berdasarkan ID
+      const factorA = factors.find(f => f.id === idA)?.name;
+      const factorB = factors.find(f => f.id === idB)?.name;
+
+      // Buat key yang mudah dibaca
+      // Contoh output key: "Leadership Support vs Employee Readiness"
+      readableComparisons[`${factorA} vs ${factorB}`] = value;
+      
+      // Opsional: Buat versi array jika nanti butuh filter
+      detailedComparisons.push({
+        factor_1: factorA,
+        factor_2: factorB,
+        score: value
+      });
+    });
+
+    // 2. Transformasi Data Ranking (Agar tidak cuma index 1,2,3)
+    const readableRankings = {
+      "Rank 1": rankings[1],
+      "Rank 2": rankings[2],
+      "Rank 3": rankings[3]
+    };
+
+    // 3. Kirim data yang sudah "Cantik" ke App.jsx
+    onNext({ 
+      comparisons: readableComparisons, // Ini yang Anda request (Key nama variable)
+      details: detailedComparisons,     // Format array (opsional, berguna untuk coding lanjut)
+      raw_comparisons: comparisons,     // Tetap simpan raw data (0-1) untuk backup/debug
+      rankings: readableRankings, 
+      cr: crResult.cr 
+    });
+  };
+
   return (
     <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-slate-200 animate-fade-in mb-10">
       <h2 className="text-xl md:text-2xl font-bold text-blue-900 mb-2">{title}</h2>
@@ -186,7 +228,7 @@ export default function AHPSurveyPage({ title, description, factors, onNext, onB
       </div>
 
       {/* VALIDATION FOOTER */}
-      <div className="mt-10 p-5 rounded-xl border flex flex-col md:flex-row items-center justify-between gap-4 transition-colors"
+<div className="mt-10 p-5 rounded-xl border flex flex-col md:flex-row items-center justify-between gap-4 transition-colors"
         style={{
            backgroundColor: !isComparisonComplete ? '#f8fafc' : (crResult.consistent ? '#f0fdf4' : '#fef2f2'),
            borderColor: !isComparisonComplete ? '#e2e8f0' : (crResult.consistent ? '#22c55e' : '#ef4444')
@@ -208,7 +250,7 @@ export default function AHPSurveyPage({ title, description, factors, onNext, onB
                 Kembali
             </button>
             <button 
-                onClick={() => onNext({ comparisons, rankings, cr: crResult.cr })}
+                onClick={handleSave} 
                 disabled={!isPreRankingComplete || !isComparisonComplete || !crResult.consistent}
                 className={`px-8 py-3 rounded-lg font-bold shadow-md transition-all
                     ${(!isPreRankingComplete || !isComparisonComplete || !crResult.consistent)
