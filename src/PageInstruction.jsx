@@ -30,7 +30,7 @@ export default function PageInstructions({ onNext, onBack }) {
       <div className="mb-8">
         <h3 className="font-bold text-slate-800 mb-3">Contoh Tampilan Pengisian</h3>
         <p className="text-sm text-slate-600 mb-2">
-          Jika Anda merasa <strong>IT Infrastructure</strong> mutlak lebih penting (nilai 9) dibanding Data Security:
+          Jika Anda merasa <strong>IT Infrastructure</strong> lebih penting (nilai 5) dibanding Data Security:
         </p>
         {/* Dummy UI Component for Example */}
         <div className="opacity-75 pointer-events-none bg-white p-4 rounded-lg border-2 border-dashed border-slate-300">
@@ -42,7 +42,7 @@ export default function PageInstructions({ onNext, onBack }) {
                 <div className="flex gap-1 w-full justify-between items-center bg-slate-100 p-2 rounded-full">
                     {[9, 7, 5, 3, 1, 3, 5, 7, 9].map((val, i) => (
                         <div key={i} className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold border 
-                            ${i === 0 ? 'bg-blue-600 text-white border-blue-600 shadow-md transform scale-110' : 'bg-white text-slate-400 border-slate-200'}`}>
+                            ${i === 2 ? 'bg-blue-600 text-white border-blue-600 shadow-md transform scale-110' : 'bg-white text-slate-400 border-slate-200'}`}>
                             {val}
                         </div>
                     ))}

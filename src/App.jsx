@@ -39,6 +39,7 @@ function App() {
 
   const handleDataSave = (key, data) => {
     setResults(prev => ({ ...prev, [key]: data }));
+    console.log(results);
     nextStep();
   };
 

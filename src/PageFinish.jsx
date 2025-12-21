@@ -1,7 +1,10 @@
 import { ChevronRight, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
 // --- HALAMAN AKHIR: FINISH ---
-export default function PageFinish({ userData }) {
+export default function PageFinish({ userData, results }) {
+  
+  console.log(results)
+
   return (
     <div className="bg-white p-10 rounded-2xl shadow-xl border border-slate-200 text-center animate-fade-in">
         <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
