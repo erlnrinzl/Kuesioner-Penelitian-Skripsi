@@ -4,7 +4,6 @@ import { ChevronRight, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 export default function AHPSurveyPage({ title, description, factors, onNext, onBack }) {
   const [comparisons, setComparisons] = useState({ "0-1": null, "1-2": null, "0-2": null });
   const [rankings, setRankings] = useState({ 1: "", 2: "", 3: "" });
-  const [warningMsg, setWarningMsg] = useState(null);
 
   // Saaty Scale Visual
   const scaleValues = [9, 7, 5, 3, 1, 3, 5, 7, 9];
@@ -19,16 +18,34 @@ export default function AHPSurveyPage({ title, description, factors, onNext, onB
   const handleSelection = (pairKey, scaleVal, positionIndex) => {
     const numericVal = getNumericValue(scaleVal, positionIndex);
     setComparisons(prev => ({ ...prev, [pairKey]: numericVal }));
-
-    // Extreme Value Warning
-    if (numericVal >= 9 || numericVal <= 1/9) {
-      const ids = pairKey.split('-');
-      const dominantName = numericVal >= 9 ? factors[ids[0]].name : factors[ids[1]].name;
-      setWarningMsg(`⚠️ Anda memilih "${dominantName}" sebagai faktor MUTLAK (9). Pastikan ini sesuai preferensi Anda.`);
-    } else {
-      setWarningMsg(null);
-    }
   };
+
+  // --- LOGIKA BARU UNTUK WARNING MULTIPLE ---
+  const activeWarnings = useMemo(() => {
+    const warnings = [];
+    
+    Object.entries(comparisons).forEach(([key, val]) => {
+      // Cek apakah nilai 9 (Mutlak Kiri) atau mendekati 0.111 (Mutlak Kanan / 1 per 9)
+      // Kita pakai batas <= 0.12 untuk menangkap 1/9
+      if (val === 9 || (val !== null && val <= 0.12)) {
+        
+        const [idA, idB] = key.split('-').map(Number);
+        const factorA = factors.find(f => f.id === idA)?.name;
+        const factorB = factors.find(f => f.id === idB)?.name;
+        
+        // Tentukan siapa yang dominan
+        const dominantName = val === 9 ? factorA : factorB;
+        const weakName = val === 9 ? factorB : factorA;
+
+        warnings.push({
+          key: key,
+          message: `Anda menilai "${dominantName}" MUTLAK LEBIH PENTING (9) dibanding "${weakName}".`
+        });
+      }
+    });
+
+    return warnings;
+  }, [comparisons, factors]);
 
   // --- PERBAIKAN DI SINI (Ganti useEffect dengan useMemo) ---
   // Kita menghitung CR secara langsung setiap kali 'comparisons' berubah.
@@ -169,11 +186,25 @@ export default function AHPSurveyPage({ title, description, factors, onNext, onB
           <CheckCircle size={18} className="text-blue-600"/> Langkah 2: Perbandingan Berpasangan
         </h3>
         
-        {warningMsg && (
-          <div className="mb-4 p-3 bg-yellow-50 text-yellow-800 text-sm border-l-4 border-yellow-400 rounded flex items-center gap-2 animate-pulse">
-            <AlertTriangle size={16}/> {warningMsg}
+        {activeWarnings.length > 0 && (
+          <div className="mb-6 space-y-2">
+            {activeWarnings.map((warn) => (
+              <div 
+                key={warn.key} 
+                className="p-3 bg-yellow-50 text-yellow-800 text-sm border-l-4 border-yellow-400 rounded flex items-start gap-2 animate-fade-in shadow-sm"
+              >
+                <AlertTriangle size={18} className="mt-0.5 flex-shrink-0 text-yellow-600"/> 
+                <span>
+                  <span className="font-bold">Perhatian Ekstrem Faktor:</span> {warn.message}
+                </span>
+              </div>
+            ))}
+            <div className="text-xs text-slate-500 pl-1 italic">
+              *Pastikan nilai Mutlak (9) ini memang sesuai dengan preferensi ekstrem Anda.
+            </div>
           </div>
         )}
+
 
         <div className="space-y-6">
           {pairs.map((pair) => {
