@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PageIntroduction from './PageIntroduction';
 import PageInstructions from './PageInstruction';
 import AHPSurveyPage from './AHPSurveyPage';
@@ -37,6 +37,10 @@ function App() {
   const [userData, setUserData] = useState({ name: '', job: '' });
   const [results, setResults] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false); // State loading
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
 
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
