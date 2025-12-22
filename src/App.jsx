@@ -91,7 +91,7 @@ function App() {
       <main className="container mx-auto max-w-4xl px-4 pt-10">
         {step === 1 && <PageIntroduction userData={userData} setUserData={setUserData} onNext={nextStep} />}
         {step === 2 && <PageInstructions onNext={nextStep} onBack={prevStep} />}
-        
+
         {step === 3 && (
           <AHPSurveyPage 
             title="Perbandingan Level 1: Konteks TOE"
@@ -99,6 +99,7 @@ function App() {
             factors={FACTORS_LEVEL_1}
             onNext={(data) => handleDataSave('TOE', data)}
             onBack={prevStep}
+            savedData={results['TOE']} // <--- TAMBAHKAN INI
           />
         )}
 
@@ -109,6 +110,7 @@ function App() {
             factors={FACTORS_TECH}
             onNext={(data) => handleDataSave('TECH', data)}
             onBack={prevStep}
+            savedData={results['TECH']} // <--- TAMBAHKAN INI
           />
         )}
 
@@ -119,6 +121,7 @@ function App() {
             factors={FACTORS_ORG}
             onNext={(data) => handleDataSave('ORG', data)}
             onBack={prevStep}
+            savedData={results['ORG']} // <--- TAMBAHKAN INI
           />
         )}
 
@@ -129,6 +132,7 @@ function App() {
             factors={FACTORS_ENV}
             onNext={(data) => handleFinalSubmit(data)}
             onBack={prevStep}
+            savedData={results['ENV']} // <--- TAMBAHKAN INI
           />
         )}
 

@@ -1,9 +1,26 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronRight, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
-export default function AHPSurveyPage({ title, description, factors, onNext, onBack }) {
-  const [comparisons, setComparisons] = useState({ "0-1": null, "1-2": null, "0-2": null });
-  const [rankings, setRankings] = useState({ 1: "", 2: "", 3: "" });
+export default function AHPSurveyPage({ title, description, factors, onNext, onBack, savedData }){
+  // 1. Inisialisasi State Comparisons
+  // Jika ada savedData, ambil 'raw_comparisons'-nya. Jika tidak, set null semua.
+  const [comparisons, setComparisons] = useState(() => {
+    if (savedData && savedData.raw_comparisons) {
+      return savedData.raw_comparisons;
+    }
+    return { "0-1": null, "1-2": null, "0-2": null };
+  });
+
+  const [rankings, setRankings] = useState(() => {
+    if (savedData && savedData.rankings) {
+      return {
+        1: savedData.rankings["Rank 1"] || "",
+        2: savedData.rankings["Rank 2"] || "",
+        3: savedData.rankings["Rank 3"] || ""
+      };
+    }
+    return { 1: "", 2: "", 3: "" };
+  });
 
   // Saaty Scale Visual
   const scaleValues = [9, 7, 5, 3, 1, 3, 5, 7, 9];
