@@ -42,7 +42,7 @@ export default function PageIntroduction({ userData, setUserData, onNext }) {
           </span>
         </p>
         <p>
-          Mengingat peran strategis Bapak/Ibu dalam transformasi digital di Kemenkeu, pandangan Bapak sangat krusial 
+          Mengingat peran strategis Bapak/Ibu dalam transformasi digital di Kemenkeu, pandangan Bapak/Ibu sangat krusial 
           untuk menentukan arah kebijakan infrastruktur TI yang lebih efisien dan aman. 
           Kuesioner ini bertujuan untuk mendapatkan bobot prioritas guna merekomendasikan cloud deployment model 
           (Private, Public, Hybrid, atau Community) yang sesuai untuk Kemenkeu Cloud Platform (KCP).
