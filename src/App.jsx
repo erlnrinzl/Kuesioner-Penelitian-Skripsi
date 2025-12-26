@@ -3,6 +3,7 @@ import PageIntroduction from './PageIntroduction';
 import PageInstructions from './PageInstruction';
 import AHPSurveyPage from './AHPSurveyPage';
 import PageFinish from './PageFinish';
+import AdminPage from './AdminPage';
 
 import { db } from './firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -37,6 +38,9 @@ function App() {
   const [userData, setUserData] = useState({ name: '', job: '' });
   const [results, setResults] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false); // State loading
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdmin = urlParams.get('mode') === 'limited_admin';
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -81,6 +85,10 @@ function App() {
       setIsSubmitting(false);
     }
   };
+  
+  if (isAdmin) {
+    return <AdminPage />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-20">
